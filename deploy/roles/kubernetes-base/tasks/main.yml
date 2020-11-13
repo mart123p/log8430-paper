@@ -42,7 +42,7 @@
 
 - name: Add Kubernetes' APT repository
   apt_repository:
-   repo: deb http://apt.kubernetes.io/ kubernetes-bionic main
+   repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
    state: present
    filename: 'kubernetes'
 
