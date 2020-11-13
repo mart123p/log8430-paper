@@ -9,6 +9,8 @@
         ssh_key: "{{ lookup('file', 'creds/ssh/id_rsa.pub') }}"
         # amount_worker + 1 VM will be created
         amount_worker: 4
+        size_worker: Standard_B1ls
     
       roles:
         - az-network
+        - az-vm-linux
