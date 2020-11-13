@@ -47,7 +47,16 @@
   poll: 0
   register: interfaces_deploy
   with_sequence: "start=2 count={{ amount_worker }}" 
-        
+
+- name: Check Interface creation status
+  async_status:
+      jid: "{{ item.ansible_job_id }}"
+  register: job_result
+  until: job_result.finished
+  retries: 10
+  delay: 10
+  loop: "{{ interfaces_deploy.results }}"
+
 - name: Create network interface for Bastion
   azure_rm_networkinterface:
     resource_group: "{{ resource_group }}"
@@ -74,12 +83,3 @@
         direction: Inbound
         destination_address_prefix: "{{ output_nic_internal1.state.ip_configurations[0].private_ip_address }}"
         destination_port_range: 22
-
-- name: Check Interface creation status
-  async_status:
-      jid: "{{ item.ansible_job_id }}"
-  register: job_result
-  until: job_result.finished
-  retries: 10
-  delay: 10
-  loop: "{{ interfaces_deploy.results }}"
