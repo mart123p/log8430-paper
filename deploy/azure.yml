@@ -1,0 +1,12 @@
+---
+    - name: Deploy the demo environnement in Azure
+      hosts: localhost
+      connection: local
+    
+      vars:
+        resource_group: log8430-paper
+        region: canadaeast
+        ssh_key: "{{ lookup('file', 'creds/ssh/id_rsa.pub') }}"
+    
+      roles:
+        - az-network
