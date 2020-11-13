@@ -1,11 +1,7 @@
 #!/bin/bash
 # Setup the port forwarding from ssh connexion for remote server
 
-ip=$(cat ../creds/ip)
-worker=$(cat ../azure.yml | grep "amount_worker:" | xargs | cut -d ' ' -f2 | tr -d '\n')
-port=6050
-user="azureuser"
-
+source common.sh
 
 echo "$worker Worker deployment detected"
 
