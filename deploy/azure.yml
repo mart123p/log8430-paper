@@ -7,6 +7,8 @@
         resource_group: log8430-paper
         region: canadaeast
         ssh_key: "{{ lookup('file', 'creds/ssh/id_rsa.pub') }}"
+        # amount_worker + 1 VM will be created
+        amount_worker: 4
     
       roles:
         - az-network

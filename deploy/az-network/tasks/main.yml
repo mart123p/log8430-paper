@@ -16,7 +16,6 @@
         name: vnet-internal
         address_prefix_cidr: "10.0.0.0/24"
         virtual_network: vnet
-        security_group: nsg-vnet
     
     - name: Create public IP address
       azure_rm_publicipaddress:
@@ -34,21 +33,20 @@
         content: "{{ output_ip.state.ip_address }}"
         dest: "creds/ip"
     
-    - name: Create network interfaces (5)
+    - name: Create network interfaces ({{ amount_worker }})
       azure_rm_networkinterface:
         resource_group: "{{ resource_group }}"
-        name: "{{ item.name }}"
+        name: "nic-internal{{ item }}"
         virtual_network: vnet
         subnet_name: "vnet-internal"
         create_with_security_group: no
         ip_configurations:
           - name: default
             private_ip_allocation_method: Dynamic
-      loop:
-        - {name: 'nic-internal2'}
-        - {name: 'nic-internal3'}
-        - {name: 'nic-internal4'}
-        - {name: 'nic-internal5'}
+      async: 300
+      poll: 0
+      register: interfaces_deploy
+      with_sequence: "start=2 count={{ amount_worker }}" 
             
     - name: Create network interface for Bastion
       azure_rm_networkinterface:
@@ -76,3 +74,12 @@
             direction: Inbound
             destination_address_prefix: "{{ output_nic_internal1.state.ip_configurations[0].private_ip_address }}"
             destination_port_range: 22
+    
+    - name: Check Interface creation status
+      async_status:
+          jid: "{{ item.ansible_job_id }}"
+      register: job_result
+      until: job_result.finished
+      retries: 10
+      delay: 10
+      loop: "{{ interfaces_deploy.results }}"
