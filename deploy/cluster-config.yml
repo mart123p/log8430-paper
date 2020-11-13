@@ -7,6 +7,7 @@
   vars_files:
     - vars/default.yml
   roles: 
+    - "host-registration"
 
 - hosts: master
   vars_files:
