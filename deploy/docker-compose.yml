@@ -1,0 +1,12 @@
+version: "3.0"
+services:
+  ansible:
+    build: docker-az-image/
+    stdin_open: true
+    tty: true
+    command: sh
+    volumes:
+      - "./:/data"
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
