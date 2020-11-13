@@ -1,0 +1,7 @@
+---
+  username: azureuser
+  port_base: 6050
+  
+  # amount_worker + 1 VM will be created
+  amount_worker: 4
+  size_worker: Standard_B1ls

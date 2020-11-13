@@ -2,14 +2,12 @@
     - name: Deploy the demo environnement in Azure
       hosts: localhost
       connection: local
-    
+      vars_files:
+        - vars/default.yml
       vars:
         resource_group: log8430-paper
         region: canadaeast
         ssh_key: "{{ lookup('file', 'creds/ssh/id_rsa.pub') }}"
-        # amount_worker + 1 VM will be created
-        amount_worker: 4
-        size_worker: Standard_B1ls
     
       roles:
         - az-network
