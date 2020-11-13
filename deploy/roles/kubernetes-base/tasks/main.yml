@@ -1,0 +1,58 @@
+---
+- name: Remove swapfile from /etc/fstab
+  mount:
+    name: "{{ item }}"
+    fstype: swap
+    state: absent
+  with_items:
+    - swap
+    - none
+
+- name: Disable swap
+  command: swapoff -a
+  when: ansible_swaptotal_mb > 0
+
+- name: Update and upgrade apt packages
+  apt:
+    upgrade: yes
+    update_cache: yes
+
+- name: Install required system packages
+  apt: name={{ item }} state=latest update_cache=yes
+  loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'gnupg-agent']
+
+- name: Add Docker GPG apt Key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add Docker Repository
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu bionic stable
+    state: present
+
+- name: Install Docker packages
+  apt: name={{ item }} state=latest update_cache=yes
+  loop: [ 'docker-ce', 'docker-ce-cli', 'containerd.io']
+
+- name: Add Kubernetes apt-key
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
+
+- name: Add Kubernetes' APT repository
+  apt_repository:
+   repo: deb http://apt.kubernetes.io/ kubernetes-bionic main
+   state: present
+   filename: 'kubernetes'
+
+- name: Install kubelet
+  apt:
+    name: kubelet
+    state: present
+    update_cache: true
+
+- name: Install kubeadm
+  apt:
+    name: kubeadm
+    state: present

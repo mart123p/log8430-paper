@@ -1,0 +1,24 @@
+---
+# Install all the requiered dependencies on the VMs
+#
+#
+- hosts: localhost
+  gather_facts: False
+  vars_files:
+    - vars/default.yml
+  roles: 
+
+- hosts: workers
+  vars_files:
+    - vars/default.yml
+  become: yes
+  roles:
+    - "kubernetes-base"
+
+- hosts: master
+  vars_files:
+    - vars/default.yml
+  become: yes
+  roles:
+    - "kubernetes-base"
+    - "kubernetes-master"

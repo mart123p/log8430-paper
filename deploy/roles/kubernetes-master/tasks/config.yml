@@ -1,0 +1,36 @@
+---
+- name: Initialize the cluster
+  shell: kubeadm init --pod-network-cidr=10.244.0.0/16 >> cluster_initialized.txt
+  args:
+    chdir: $HOME
+    creates: cluster_initialized.txt
+
+- name: Create .kube directory
+  become: yes
+  become_user: "{{ username }}"
+  file:
+    path: $HOME/.kube
+    state: directory
+    mode: 0755
+
+- name: Copy admin.conf to user's kube config
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /home/{{ username }}/.kube/config
+    remote_src: yes
+    owner: "{{ username }}"
+
+- name: Install Pod network
+  become: yes
+  become_user: "{{ username }}"
+  shell: kubectl create -f https://docs.projectcalico.org/v3.4/getting-started/kubernetes/installation/hosted/calico.yaml
+  args:
+    chdir: $HOME
+    creates: pod_network_setup.txt
+
+- name: Generate join command
+  command: kubeadm token create --print-join-command
+  register: join_command
+
+- name: Copy join command to local file
+  local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="creds/join-command"
