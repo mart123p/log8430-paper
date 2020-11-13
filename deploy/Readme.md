@@ -15,3 +15,9 @@ of the ansible modules. A docker-compose.yml is provided to help you have a work
 
 Since there is little use to have many public IP adresses for every node, a script is provided to connect to every
 node and expose a port locally. This way a single IP can be used for to access and control the entire system.
+
+1. Connect to the cluster with the script `scripts/connect.sh`
+2. Install Docker and Kubernetes on the cluster `ansible-playbook cluster-install.yml`
+3. Configure the cluster `ansible-playbook cluster-config.yml`
+
+Kubernetes is now installed on the cluster
