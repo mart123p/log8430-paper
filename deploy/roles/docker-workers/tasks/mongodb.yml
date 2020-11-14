@@ -1,6 +1,7 @@
 ---
 - name: Load a helloworld nginx example
   docker_container:
+    auto_remove: no
     name: hello
     image: nginxdemos/hello
     state: started
