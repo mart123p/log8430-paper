@@ -1,4 +1,14 @@
 ---
+- name: Calculate number of VMs (No test)
+  set_fact:
+    vm_count: "{{ amount_worker + 1 }}"
+  when: test_vm == false
+
+- name: Calculate number of VMs (With a test)
+  set_fact:
+    vm_count: "{{ amount_worker + 2 }}"
+  when: test_vm == true
+
 - name: Create Linux VMs
   azure_rm_virtualmachine:
     resource_group: "{{ resource_group }}"
@@ -19,7 +29,8 @@
   async: 300
   poll: 0
   register: linux_deploy
-  with_sequence: "start=1 count={{ amount_worker + 2 }}"
+  with_sequence: "start=1 count={{ vm_count }}"
+
 
 # Wait for other long running tasks
 - name: Check Linux VM creation status

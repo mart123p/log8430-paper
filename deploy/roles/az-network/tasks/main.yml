@@ -33,7 +33,17 @@
     content: "{{ output_ip.state.ip_address }}"
     dest: "creds/ip"
 
-- name: Create network interfaces ({{ amount_worker }})
+- name: Calculate number of interfaces requiered (No test)
+  set_fact:
+    network_count: "{{ amount_worker }}"
+  when: test_vm == false
+
+- name: Calculate number of interfaces requiered (With test)
+  set_fact:
+    network_count: "{{ amount_worker + 1 }}"
+  when: test_vm == true
+
+- name: Create network interfaces ({{ network_count }})
   azure_rm_networkinterface:
     resource_group: "{{ resource_group }}"
     name: "nic-internal{{ item }}"
@@ -47,7 +57,7 @@
   async: 300
   poll: 0
   register: interfaces_deploy
-  with_sequence: "start=2 count={{ amount_worker + 1 }}" 
+  with_sequence: "start=2 count={{ network_count }}" 
 
 - name: Check Interface creation status
   async_status:
