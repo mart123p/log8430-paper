@@ -19,7 +19,7 @@
   async: 300
   poll: 0
   register: linux_deploy
-  with_sequence: "start=1 count={{ amount_worker + 1 }}"
+  with_sequence: "start=1 count={{ amount_worker + 2 }}"
 
 # Wait for other long running tasks
 - name: Check Linux VM creation status

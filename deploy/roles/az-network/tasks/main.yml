@@ -42,11 +42,12 @@
     create_with_security_group: no
     ip_configurations:
       - name: default
-        private_ip_allocation_method: Dynamic
+        private_ip_allocation_method: Static
+        private_ip_address: "10.0.0.{{ (item|int) + 2 }}"
   async: 300
   poll: 0
   register: interfaces_deploy
-  with_sequence: "start=2 count={{ amount_worker }}" 
+  with_sequence: "start=2 count={{ amount_worker + 1 }}" 
 
 - name: Check Interface creation status
   async_status:
