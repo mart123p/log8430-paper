@@ -35,7 +35,7 @@
   apt: name={{ item }} state=latest update_cache=yes
   loop: [ 'docker-ce', 'docker-ce-cli', 'containerd.io']
 
-- name: Add {{ username }} to docker
+- name: Add {{ username }} to docker group
   user:
     name: "{{ username }}"
     groups: docker
