@@ -9,19 +9,10 @@
   roles: 
     - "host-registration"
 
-- hosts: master
+- hosts: master:workers
   vars_files:
     - vars/default.yml
   become: yes
   tasks:
     - name: Configure Master node
       include: "roles/docker-master/tasks/hello.yml"
-  
-
-- hosts: workers
-  vars_files:
-    - vars/default.yml
-  become: yes
-  tasks:
-    - name: Configure workers node
-      include: "roles/docker-workers/tasks/hello.yml"
