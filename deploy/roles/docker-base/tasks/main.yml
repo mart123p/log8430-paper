@@ -35,24 +35,8 @@
   apt: name={{ item }} state=latest update_cache=yes
   loop: [ 'docker-ce', 'docker-ce-cli', 'containerd.io']
 
-- name: Add Kubernetes apt-key
-  apt_key:
-    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-    state: present
-
-- name: Add Kubernetes' APT repository
-  apt_repository:
-   repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
-   state: present
-   filename: 'kubernetes'
-
-- name: Install kubelet
-  apt:
-    name: kubelet
-    state: present
-    update_cache: true
-
-- name: Install kubeadm
-  apt:
-    name: kubeadm
-    state: present
+- name: Add {{ username }} to docker
+  user:
+    name: "{{ username }}"
+    groups: docker
+    append: yes

@@ -15,7 +15,7 @@
   become: yes
   tasks:
     - name: Configure Master node
-      include: "roles/kubernetes-master/tasks/config.yml"
+      include: "roles/docker-master/tasks/hello.yml"
   
 
 - hosts: workers
@@ -24,4 +24,4 @@
   become: yes
   tasks:
     - name: Configure workers node
-      include: "roles/kubernetes-workers/tasks/config.yml"
+      include: "roles/docker-workers/tasks/hello.yml"

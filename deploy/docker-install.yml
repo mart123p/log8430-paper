@@ -14,11 +14,4 @@
     - vars/default.yml
   become: yes
   roles:
-    - "kubernetes-base"
-
-- hosts: master
-  vars_files:
-    - vars/default.yml
-  become: yes
-  roles:
-    - "kubernetes-master"
+    - "docker-base"
