@@ -4,5 +4,6 @@
 source common.sh
 
 ssh -i ../creds/ssh/id_rsa \
+    -o StrictHostKeyChecking=no \
     -p $(( $port + $1 )) \
     $user@localhost
