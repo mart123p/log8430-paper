@@ -1,5 +1,5 @@
 ---
-# Install all the requiered dependencies on the VMs
+# Deploy a helloworld container on all the nodes
 #
 #
 - hosts: localhost

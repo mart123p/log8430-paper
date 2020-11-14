@@ -1,0 +1,26 @@
+---
+# Deploy mongodb cluster on the VMs
+#
+#
+- hosts: localhost
+  gather_facts: False
+  vars_files:
+    - vars/default.yml
+  roles: 
+    - "host-registration"
+
+- hosts: master
+  vars_files:
+    - vars/default.yml
+  become: yes
+  tasks:
+    - name: Configure Master node
+      include: "roles/docker-master/tasks/mongodb.yml"
+
+- hosts: workers
+  vars_files:
+    - vars/default.yml
+  become: yes
+  tasks:
+    - name: Configure Workers node
+      include: "roles/docker-workers/tasks/mongodb.yml"
