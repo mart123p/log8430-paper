@@ -2,7 +2,7 @@
   username: azureuser
   port_base: 6050
   
-  # amount_worker + 2 VM will be created
+  # amount_worker + 2 VM will be created if test_vm selected if not amount_worker + 1 
   amount_worker: 2
   size_worker: Standard_B2s
   ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
