@@ -6,7 +6,7 @@ source common.sh
 echo "$worker Worker deployment detected"
 
 command="ssh"
-for ((i=2; i < $(( 2 + $worker)); i++))
+for ((i=2; i < $(( 3 + $worker)); i++))
 do
     command="${command} -L $(( $port + $i )):10.0.0.$(( $i + 2 )):22"
 done
