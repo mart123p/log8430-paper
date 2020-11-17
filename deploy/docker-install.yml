@@ -9,9 +9,16 @@
   roles: 
     - "host-registration"
 
-- hosts: workers:master
+- hosts: workers:monitor:master
   vars_files:
     - vars/default.yml
   become: yes
   roles:
     - "docker-base"
+
+- hosts: workers:master
+  vars_files:
+    - vars/default.yml
+  become: yes
+  roles:
+    - "agent-monitor"
