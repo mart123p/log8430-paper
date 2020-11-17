@@ -39,14 +39,14 @@
 
 - name: Compute Nic name Workers
   set_fact:
-    nic_create: "{{ nic_create + [{'name':'nic-worker-' + item, 'ip':'10.0.0.' + item }] }}"
-  with_sequence: "start=4 count={{ vm_config['worker']['count'] }}" 
+    nic_create: "{{ nic_create + [{'name':'nic-worker-' + item, 'ip':'10.0.0.' + (item + 3)  }] }}"
+  with_sequence: "start=1 count={{ vm_config['worker']['count'] }}" 
 
 
 - name: Compute Nic name Testers
   set_fact:
-    nic_create: "{{ nic_create + [{'name': 'nic-test-' + item, 'ip':'10.0.0.' + item }] }}"
-  with_sequence: "start=50 count={{ vm_config['test']['count'] }}" 
+    nic_create: "{{ nic_create + [{'name': 'nic-test-' + item, 'ip':'10.0.0.' + ( item + 49 ) }] }}"
+  with_sequence: "start=1 count={{ vm_config['test']['count'] }}" 
    
 - name: Compute Nic name Monitor
   set_fact:
