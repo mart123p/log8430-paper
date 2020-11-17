@@ -1,4 +1,8 @@
 ---
+- name: Create vm_create
+  set_fact:
+    vm_create: []
+  
 - name: Compute VM name Workers
   set_fact:
     vm_create: "{{ vm_create + [{'name': 'node-worker-' + item,'nic':'nic-worker-' + item, 'size':vm_config['worker']['size']}] }}"
@@ -37,6 +41,7 @@
       version: latest
   async: 300
   poll: 0
+  register: linux_deploy
   loop: "{{ vm_create }}"
 
 # Wait for other long running tasks
