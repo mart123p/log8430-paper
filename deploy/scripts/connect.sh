@@ -18,6 +18,7 @@ done
 
 if [[ $monitor -eq 1 ]]; then
     command="${command} -L $(( $port + 205 )):10.0.0.$(( 205 )):22"
+    command="${command} -L 8000:10.0.0.$(( 205 )):3000"
 fi
 
 command="${command} -i ../creds/ssh/id_rsa $user@$ip"

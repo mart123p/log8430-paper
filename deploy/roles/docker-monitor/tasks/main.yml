@@ -1,15 +1,19 @@
 ---
 - name: Create docker directory
   file:
-    path: /home/$HOME/docker
+    path: /root/docker
     state: directory
     recurse: yes
 
 - name: Copy docker-compose.yml
   copy:
     src: docker-compose.yml
-    dest: /home/$HOME/docker/
+    dest: /root/docker/
+
+- name: Install Docker Compose Module for Python
+  pip:
+    name: docker-compose
 
 - name: Deploy docker-compose.yml
   docker_compose:
-    project_src: docker
+    project_src: /root/docker
