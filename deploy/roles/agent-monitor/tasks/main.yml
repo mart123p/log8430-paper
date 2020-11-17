@@ -15,8 +15,14 @@
     src: telegraf.conf
     dest: /etc/telegraf/telegraf.conf
 
+- name: Add telegraf to docker group
+  user:
+    name: telegraf
+    groups: docker
+    append: yes
+
 - name: Enable & Start telegraf
   systemd:
     name: telegraf
     enabled: yes
-    state: started
+    state: restarted
