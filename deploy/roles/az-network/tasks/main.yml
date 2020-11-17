@@ -33,21 +33,29 @@
     content: "{{ output_ip.state.ip_address }}"
     dest: "creds/ip"
 
+- name: Set nic_create variable
+  set_fact:
+    nic_create: []
 
 - name: Compute Nic name Workers
   set_fact:
-    nic_create: "{{ nic_create + [{'name': 'nic-worker-'{{ item }}, 'ip':'10.0.0.'{{ item }}}] }}"
+    nic_create: "{{ nic_create + [{'name':'nic-worker-' + item, 'ip':'10.0.0.' + item }] }}"
   with_sequence: "start=4 count={{ vm_config['worker']['count'] }}" 
+
 
 - name: Compute Nic name Testers
   set_fact:
-    nic_create: "{{ nic_create + [{'name': 'nic-test-'{{ item }}, 'ip':'10.0.0.'{{ item }}}] }}"
+    nic_create: "{{ nic_create + [{'name': 'nic-test-' + item, 'ip':'10.0.0.' + item }] }}"
   with_sequence: "start=50 count={{ vm_config['test']['count'] }}" 
    
 - name: Compute Nic name Monitor
   set_fact:
     nic_create: "{{ nic_create + [{'name': 'nic-monitor-1', 'ip':'10.0.0.205'}] }}"
   when: vm_config['monitor']['count'] == 1
+
+- name: Show nic creation variable
+  debug:
+    msg: "{{ nic_create }}"
 
 
 - name: Create network interfaces

@@ -1,22 +1,22 @@
 ---
 - name: Compute VM name Workers
   set_fact:
-    vm_create: "{{ vm_create + [{'name': 'node-worker-'{{ item }},'nic':'nic-worker-'{{ item }}, 'size':vm_config['worker']['size']}] }}"
+    vm_create: "{{ vm_create + [{'name': 'node-worker-' + item,'nic':'nic-worker-' + item, 'size':vm_config['worker']['size']}] }}"
   with_sequence: "start=1 count={{ vm_config['worker']['count'] }}" 
 
 - name: Compute VM name Testers
   set_fact:
-    vm_create: "{{ vm_create + [{'name': 'node-test-'{{ item }},'nic':'nic-test-'{{ item }}, 'size':vm_config['test']['size']}] }}"
+    vm_create: "{{ vm_create + [{'name': 'node-test-' + item,'nic':'nic-test-' + item, 'size':vm_config['test']['size']}] }}"
   with_sequence: "start=1 count={{ vm_config['test']['count'] }}"
    
 - name: Compute VM name Monitor
   set_fact:
-    vm_create: "{{ vm_create + [{'name': 'node-monitor-'{{ item }},'nic':'nic-monitor-'{{ item }}, 'size':vm_config['monitor']['size']}] }}"
+    vm_create: "{{ vm_create + [{'name': 'node-monitor-1','nic':'nic-monitor-1', 'size':vm_config['monitor']['size']}] }}"
   when: vm_config['monitor']['count'] == 1
 
 - name: Compute VM name Master
   set_fact:
-    vm_create: "{{ vm_create + [{'name': 'node-master-'{{ item }},'nic':'nic-master-'{{ item }}, 'size':vm_config['master']['size']}] }}"
+    vm_create: "{{ vm_create + [{'name': 'node-master-1','nic':'nic-master-1', 'size':vm_config['master']['size']}] }}"
 
 - name: Create Linux VMs Workers
   azure_rm_virtualmachine:
