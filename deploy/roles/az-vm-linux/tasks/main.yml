@@ -1,25 +1,34 @@
 ---
-- name: Calculate number of VMs (No test)
+- name: Compute VM name Workers
   set_fact:
-    vm_count: "{{ amount_worker + 2 }}"
-  when: test_vm == false
+    vm_create: "{{ vm_create + [{'name': 'node-worker-'{{ item }},'nic':'nic-worker-'{{ item }}, 'size':vm_config['worker']['size']}] }}"
+  with_sequence: "start=1 count={{ vm_config['worker']['count'] }}" 
 
-- name: Calculate number of VMs (With a test)
+- name: Compute VM name Testers
   set_fact:
-    vm_count: "{{ amount_worker + 3 }}"
-  when: test_vm == true
+    vm_create: "{{ vm_create + [{'name': 'node-test-'{{ item }},'nic':'nic-test-'{{ item }}, 'size':vm_config['test']['size']}] }}"
+  with_sequence: "start=1 count={{ vm_config['test']['count'] }}"
+   
+- name: Compute VM name Monitor
+  set_fact:
+    vm_create: "{{ vm_create + [{'name': 'node-monitor-'{{ item }},'nic':'nic-monitor-'{{ item }}, 'size':vm_config['monitor']['size']}] }}"
+  when: vm_config['monitor']['count'] == 1
 
-- name: Create Linux VMs
+- name: Compute VM name Master
+  set_fact:
+    vm_create: "{{ vm_create + [{'name': 'node-master-'{{ item }},'nic':'nic-master-'{{ item }}, 'size':vm_config['master']['size']}] }}"
+
+- name: Create Linux VMs Workers
   azure_rm_virtualmachine:
     resource_group: "{{ resource_group }}"
-    name: "node-{{ item }}"
-    vm_size: "{{ size_worker }}"
+    name: "{{ item.name }}"
+    vm_size: "{{ item.size }}"
     admin_username: "{{ username }}"
     ssh_password_enabled: no
     ssh_public_keys:
       - path: /home/{{ username }}/.ssh/authorized_keys
         key_data: "{{ ssh_key }}"
-    network_interfaces: "nic-internal{{ item }}"
+    network_interfaces: "{{ item.nic }}"
     os_type: Linux
     image:
       offer: UbuntuServer
@@ -28,12 +37,10 @@
       version: latest
   async: 300
   poll: 0
-  register: linux_deploy
-  with_sequence: "start=1 count={{ vm_count }}"
-
+  loop: "{{ vm_create }}"
 
 # Wait for other long running tasks
-- name: Check Linux VM creation status
+- name: Check Linux VM Workers creation status
   async_status:
     jid: "{{ item.ansible_job_id }}"
   register: job_result

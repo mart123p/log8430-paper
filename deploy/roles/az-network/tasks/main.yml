@@ -33,45 +33,44 @@
     content: "{{ output_ip.state.ip_address }}"
     dest: "creds/ip"
 
-- name: Calculate number of interfaces requiered (No test)
-  set_fact:
-    network_count: "{{ amount_worker + 1 }}"
-  when: test_vm == false
 
-- name: Calculate number of interfaces requiered (With test)
+- name: Compute Nic name Workers
   set_fact:
-    network_count: "{{ amount_worker + 2 }}"
-  when: test_vm == true
+    nic_create: "{{ nic_create + [{'name': 'nic-worker-'{{ item }}, 'ip':'10.0.0.'{{ item }}}] }}"
+  with_sequence: "start=4 count={{ vm_config['worker']['count'] }}" 
 
-- name: Create network interfaces ({{ network_count }})
+- name: Compute Nic name Testers
+  set_fact:
+    nic_create: "{{ nic_create + [{'name': 'nic-test-'{{ item }}, 'ip':'10.0.0.'{{ item }}}] }}"
+  with_sequence: "start=50 count={{ vm_config['test']['count'] }}" 
+   
+- name: Compute Nic name Monitor
+  set_fact:
+    nic_create: "{{ nic_create + [{'name': 'nic-monitor-1', 'ip':'10.0.0.205'}] }}"
+  when: vm_config['monitor']['count'] == 1
+
+
+- name: Create network interfaces
   azure_rm_networkinterface:
     resource_group: "{{ resource_group }}"
-    name: "nic-internal{{ item }}"
+    name: "{{ item.name }}"
     virtual_network: vnet
     subnet_name: "vnet-internal"
     create_with_security_group: no
     ip_configurations:
       - name: default
         private_ip_allocation_method: Static
-        private_ip_address: "10.0.0.{{ (item|int) + 2 }}"
+        private_ip_address: "{{ item.ip }}"
   async: 300
   poll: 0
   register: interfaces_deploy
-  with_sequence: "start=2 count={{ network_count }}" 
+  loop: "{{ nic_create }}"
 
-- name: Check Interface creation status
-  async_status:
-      jid: "{{ item.ansible_job_id }}"
-  register: job_result
-  until: job_result.finished
-  retries: 10
-  delay: 10
-  loop: "{{ interfaces_deploy.results }}"
-
+# Master interface creation
 - name: Create network interface for Bastion
   azure_rm_networkinterface:
     resource_group: "{{ resource_group }}"
-    name: nic-internal1
+    name: nic-master-1
     virtual_network: vnet
     subnet_name: vnet-internal
     ip_configurations:
@@ -79,8 +78,10 @@
         public_ip_address_name: public-ip
         primary: True
       - name: private
-        private_ip_allocation_method: Dynamic
-  register: output_nic_internal1
+        private_ip_allocation_method: Static
+        private_ip_address: "10.0.0.200"
+  register: output_nic_master
+
 
 - name: Add SSH rule Bastion to nsg-vnet
   azure_rm_securitygroup:
@@ -92,5 +93,14 @@
         access: "Allow"
         priority: 110
         direction: Inbound
-        destination_address_prefix: "{{ output_nic_internal1.state.ip_configurations[0].private_ip_address }}"
+        destination_address_prefix: "{{ output_nic_master.state.ip_configurations[0].private_ip_address }}"
         destination_port_range: 22
+
+- name: Check interface creation status
+  async_status:
+      jid: "{{ item.ansible_job_id }}"
+  register: job_result
+  until: job_result.finished
+  retries: 10
+  delay: 10
+  loop: "{{ interfaces_deploy.results }}"

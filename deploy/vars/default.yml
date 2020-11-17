@@ -3,7 +3,18 @@
   port_base: 6050
   
   # amount_worker + 2 VM will be created if test_vm selected if not amount_worker + 1 
-  amount_worker: 2
-  size_worker: Standard_B2s
   ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
-  test_vm: false
+
+  vm_config:
+    worker:
+      count: 2
+      size: Standard_B2s
+    test:
+      count: 1 
+      size: Standard_B2s
+    master:
+      count: 1 #Value is hard coded to 1 and not read
+      size: Standard_B2s
+    monitor:
+      count: 1 #1 monitor vm is present 0 monitor vm is not present
+      size: Standard_B1s
