@@ -6,7 +6,7 @@ source common.sh
 test_vm=$(cat ../vars/default.yml | grep "test_vm:" | xargs | cut -d ' ' -f2 | tr -d '\n' | awk '{print tolower($0)}')
 
 echo "$worker Worker deployment detected"
-workerCount=$worker
+workerCount=$(( $worker + 1 ))
 
 if $test_vm; then
     echo "Test VM detected"
