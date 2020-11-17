@@ -1,0 +1,21 @@
+version: '3'
+services:
+  grafana:
+    image: grafana/grafana
+    restart: always
+    ports:
+      - 3000:3000
+    depends_on:
+      - "influxdb"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+  influxdb:
+    image: influxdb
+    hostname: influxdb
+    restart: always
+    ports:
+        - 8086:8086
+    volumes:
+      - influxdb_data:/var/lib/influxdb
