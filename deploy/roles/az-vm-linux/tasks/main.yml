@@ -1,12 +1,12 @@
 ---
 - name: Calculate number of VMs (No test)
   set_fact:
-    vm_count: "{{ amount_worker + 1 }}"
+    vm_count: "{{ amount_worker + 2 }}"
   when: test_vm == false
 
 - name: Calculate number of VMs (With a test)
   set_fact:
-    vm_count: "{{ amount_worker + 2 }}"
+    vm_count: "{{ amount_worker + 3 }}"
   when: test_vm == true
 
 - name: Create Linux VMs
