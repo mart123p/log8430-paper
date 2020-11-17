@@ -1,9 +1,15 @@
 ---
 - name: Install telegraf
   apt:
-    deb: https://dl.influxdata.com/influxdb/releases/influxdb_1.8.3_amd64.deb
+    deb: https://dl.influxdata.com/telegraf/releases/telegraf_1.16.2-1_amd64.deb
     state: present
-  
+
+- name: Create telegraf directory
+  file:
+    path: /etc/telegraf
+    recurse: yes
+    state: directory
+
 - name: Copy the telegraf configuration file
   copy:
     src: telegraf.conf
