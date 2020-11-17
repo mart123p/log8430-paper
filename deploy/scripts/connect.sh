@@ -3,22 +3,27 @@
 
 source common.sh
 
-test_vm=$(cat ../vars/default.yml | grep "test_vm:" | xargs | cut -d ' ' -f2 | tr -d '\n' | awk '{print tolower($0)}')
-
 echo "$worker Worker deployment detected"
-workerCount=$(( $worker + 1 ))
-
-if $test_vm; then
-    echo "Test VM detected"
-    workerCount=$(( $worker + 1 ))
-fi
 
 command="ssh"
-for ((i=2; i < $(( 2 + $workerCount)); i++))
+for ((i=1; i <= $(( $worker)); i++))
 do
-    command="${command} -L $(( $port + $i )):10.0.0.$(( $i + 2 )):22"
+    command="${command} -L $(( $port + $i -1 )):10.0.0.$(( $i + 3 )):22"
 done
+
+for ((i=1; i <= $(( $test )); i++))
+do
+    command="${command} -L $(( $port + 49 + $i )):10.0.0.$(( $i + 49 )):22"
+done
+
+if [[ $monitor -eq 1 ]]; then
+    command="${command} -L $(( $port + 205 )):10.0.0.$(( 205 )):22"
+fi
+
 command="${command} -i ../creds/ssh/id_rsa $user@$ip"
+
+
+
 echo "Connecting to Bastion"
 echo $command
 
