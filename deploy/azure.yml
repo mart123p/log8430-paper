@@ -11,4 +11,5 @@
     
       roles:
         - az-network
+        - az-dns
         - az-vm-linux
