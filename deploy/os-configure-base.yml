@@ -9,6 +9,7 @@
   roles: 
     - "host-registration"
 
+# Install docker on vm
 - hosts: workers:monitor:master:testers
   vars_files:
     - vars/default.yml
@@ -16,9 +17,26 @@
   roles:
     - "docker-base"
 
+# Install monitoring and gluster
 - hosts: workers:master
   vars_files:
     - vars/default.yml
   become: yes
   roles:
     - "agent-monitor"
+    - "gluster-base"
+    - "gluster-server"
+
+# Configure cluster volumes
+- hosts: master
+  vars_files:
+    - vars/default.yml
+  become: yes
+
+# Configure gluster mount
+- hosts: workers:master:testers
+  vars_files:
+    - vars/default.yml
+  become: yes
+  roles:
+    - "gluster-client"
