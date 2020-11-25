@@ -3,6 +3,11 @@
   azure_rm_resourcegroup:
     name: "{{ resource_group }}"
     location: canadaeast
+  register: resource_group_out
+
+- name: Extract subscription_id
+  set_fact:
+    sub_id: "{{ resource_group_out.state.id | regex_search('[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}', multiline=True) }}"
 
 - name: Create virtual network
   azure_rm_virtualnetwork:
