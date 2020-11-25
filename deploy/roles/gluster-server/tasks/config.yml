@@ -23,4 +23,5 @@
     name: shared
     bricks: /srv/gluster/brick/shared/
     cluster: "{{ cluster_list }}"
+    force: true
   run_once: true
