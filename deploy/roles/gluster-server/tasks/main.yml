@@ -1,0 +1,11 @@
+---
+- name: Install Gluster Server
+  apt:
+    name: glusterfs-server
+    state: present
+
+- name: Create directory for gluster volume data
+  file:
+    path: /srv/gluster/brick/shared/
+    recurse: yes
+    state: directory

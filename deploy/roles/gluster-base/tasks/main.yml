@@ -1,0 +1,9 @@
+---
+- name: Add Gluster Repository
+  apt_repository:
+    repo: ppa:gluster/glusterfs-7
+    state: present
+
+- name: Update apt packages
+  apt:
+    update_cache: yes

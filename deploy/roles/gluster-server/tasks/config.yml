@@ -1,0 +1,26 @@
+---
+- name: Create cluster list
+  set_fact:
+    cluster_list: []
+  
+- name: Update cluster list
+  set_fact:
+    cluster_list: "{{ cluster_list + [ 'worker-'+ item + '.hosts.' + dnszone ]}}"
+  with_sequence: "start=1 count={{ vm_config['worker']['count'] }}"
+
+- name: Add master to cluster list
+  set_fact:
+    cluster_list: "{{ cluster_list + [ 'master-1.hosts.' + dnszone ]}}"
+
+- name: Config peers
+  gluster.gluster.gluster_peer:
+    state: present
+    nodes: "{{ cluster_list }}"
+    
+- name: Create a volume gluster
+  gluster.gluster.gluster_volume:
+    state: present
+    name: shared
+    bricks: /srv/gluster/brick/shared/
+    cluster: "{{ cluster_list }}"
+  run_once: true

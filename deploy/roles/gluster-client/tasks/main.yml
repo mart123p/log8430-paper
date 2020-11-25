@@ -1,0 +1,20 @@
+---
+- name: Install Gluster client
+  apt:
+    name: glusterfs-client
+    state: present
+
+# Mount the glusterfs directory
+- name: Create the mount directory
+  file:
+    recurse: yes
+    path: /mnt/shared
+    state: directory
+
+- name: Ensure Gluster volume is mounted.
+  mount:
+    path: /mnt/shared 
+    src: "{{ 'master-1.hosts.' + dnszone }}:/shared"
+    fstype: glusterfs
+    opts: "defaults,_netdev"
+    state: mounted
