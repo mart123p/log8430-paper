@@ -12,6 +12,11 @@
   command: swapoff -a
   when: ansible_swaptotal_mb > 0
 
+- name: Make sure to allow all trafic
+  ufw:
+    state: enabled
+    policy: allow
+
 - name: Update and upgrade apt packages
   apt:
     upgrade: yes
