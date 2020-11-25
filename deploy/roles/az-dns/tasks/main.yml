@@ -1,0 +1,119 @@
+---
+- name: Set generic error DNS record A
+  set_fact:
+    dns_error_a: "The list of record sets of type 'A' may not contain multiple entries with the same 'ipv4Address'."
+- name: Set generic error DNS record CNAME
+  set_fact:
+    dns_error_cname: "The CNAME record could not be created because another record with the same name already exists in this zone."
+
+- name: Create Private DNS Zone
+  azure_rm_resource:
+    api_version: "2018-09-01"
+    resource_group: "{{ resource_group }}"
+    provider: "network"
+    resource_type: "privatednszones"
+    resource_name: "{{ dnszone }}"
+    body:
+      location: "Global"
+
+- name: wait for the {{ dnszone }} private dns zone to finish registering before progressing
+  azure_rm_resource_info:
+    api_version: "2018-09-01"
+    resource_group: "{{ resource_group }}"
+    provider: "network"
+    resource_type: "privatednszones"
+    resource_name: "{{ dnszone }}"
+  register: dnszone_output
+  until: dnszone_output.response[0].code is not defined
+  delay: 10
+  retries: 10
+
+- name: Create Private DNS Zone link
+  azure_rm_resource:
+    api_version: '2018-09-01'
+    resource_group: "{{ resource_group }}"
+    provider: network
+    resource_type: privatednszones
+    resource_name: "{{ dnszone }}"
+    subresource:
+      - type: virtualnetworklinks
+        name: "vnet"
+    body:
+      location: Global
+      properties: 
+        virtualNetwork: 
+          id: /subscriptions/{{ sub_id }}/resourceGroups/{{ resource_group }}/providers/Microsoft.Network/virtualNetworks/vnet
+        registrationEnabled: false
+
+- name: Wait for zone link creation
+  azure_rm_resource_info:
+    api_version: '2018-09-01'
+    resource_group: "{{ resource_group }}"
+    provider: network
+    resource_type: privatednszones
+    resource_name: "{{ dnszone }}"
+    subresource:
+      - type: virtualnetworklinks
+        name: "vnet"
+  register: dnslink_output
+  until: dnslink_output.response[0].code is not defined
+  delay: 10
+  retries: 10
+
+# DNS Records
+- name: DNS Host for vms
+  command: >
+    az network private-dns record-set a add-record
+    --ipv4-address "{{ item.ip }}"
+    --record-set-name "{{ item.name | replace('nic-','') }}.hosts"
+    --zone-name "{{ dnszone }}"
+    --resource-group "{{ resource_group }}"
+  loop: "{{ nic_create }}"
+  register: dns_record_vm
+  failed_when: dns_record_vm.rc == 1 and dns_error_a not in dns_record_vm.stderr
+
+- name: DNS Host for master
+  command: >
+    az network private-dns record-set a add-record
+    --ipv4-address "10.0.0.200"
+    --record-set-name "master-1.hosts"
+    --zone-name "{{ dnszone }}"
+    --resource-group "{{ resource_group }}"
+  register: dns_record_master
+  failed_when: dns_record_master.rc == 1 and dns_error_a not in dns_record_master.stderr
+
+#CNAME Entries
+- name: Set cname_register variable
+  set_fact:
+    cname_create: []
+
+- name: Compute CNAME Entries CA Fabric
+  set_fact:
+    cname_create: "{{ cname_create + [{'cname':'worker-' + item+'.hosts', 'alias':'ca.org'+item  }] }}"
+  with_sequence: "start=1 count={{ vm_config['worker']['count'] }}" 
+
+- name: Compute CNAME Entries Peer Fabric
+  set_fact:
+    cname_create: "{{ cname_create + [{'cname':'worker-' + item+'.hosts', 'alias':'peer0.org'+item  }] }}"
+  with_sequence: "start=1 count={{ vm_config['worker']['count'] }}" 
+
+- name: Add CNAME entries for organization. One peer per organisation
+  command: >
+    az network private-dns record-set cname set-record
+    --cname "{{ item.cname }}"
+    --record-set-name "{{ item.alias }}"
+    --zone-name "{{ dnszone }}"
+    --resource-group "{{ resource_group }}"
+  loop: "{{ cname_create }}"
+  register: dns_record_cname_peers
+  failed_when: dns_record_cname_peers.rc == 1 and dns_error_cname not in dns_record_cname_peers.stderr
+
+- name: Add CNAME entry orderer
+  command: >
+    az network private-dns record-set cname set-record
+    --cname "master-1.hosts"
+    --record-set-name "orderer"
+    --zone-name "{{ dnszone }}"
+    --resource-group "{{ resource_group }}"
+  register: dns_record_cname_master
+  failed_when: dns_record_cname_master.rc == 1 and dns_error_cname not in dns_record_cname_master.stderr
