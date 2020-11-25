@@ -89,12 +89,12 @@
 
 - name: Compute CNAME Entries CA Fabric
   set_fact:
-    cname_create: "{{ cname_create + [{'cname':'worker-' + item+'.hosts', 'alias':'ca.org'+item  }] }}"
+    cname_create: "{{ cname_create + [{'cname':'worker-' + item+'.hosts.'+ dnszone, 'alias':'ca.org'+item  }] }}"
   with_sequence: "start=1 count={{ vm_config['worker']['count'] }}" 
 
 - name: Compute CNAME Entries Peer Fabric
   set_fact:
-    cname_create: "{{ cname_create + [{'cname':'worker-' + item+'.hosts', 'alias':'peer0.org'+item  }] }}"
+    cname_create: "{{ cname_create + [{'cname':'worker-' + item+'.hosts.'+ dnszone, 'alias':'peer0.org'+item  }] }}"
   with_sequence: "start=1 count={{ vm_config['worker']['count'] }}" 
 
 - name: Add CNAME entries for organization. One peer per organisation
@@ -111,7 +111,7 @@
 - name: Add CNAME entry orderer
   command: >
     az network private-dns record-set cname set-record
-    --cname "master-1.hosts"
+    --cname "master-1.hosts.{{ dnszone }}"
     --record-set-name "orderer"
     --zone-name "{{ dnszone }}"
     --resource-group "{{ resource_group }}"
