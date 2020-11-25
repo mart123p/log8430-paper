@@ -9,7 +9,7 @@
   roles: 
     - "host-registration"
 
-- hosts: workers:monitor:master:test
+- hosts: workers:monitor:master:testers
   vars_files:
     - vars/default.yml
   become: yes
