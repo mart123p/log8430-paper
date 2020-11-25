@@ -32,7 +32,10 @@
   vars_files:
     - vars/default.yml
   become: yes
-
+  tasks:
+    - name: Configure Gluster volume
+      include: "roles/gluster-server/tasks/config.yml"
+  
 # Configure gluster mount
 - hosts: workers:master:testers
   vars_files:
@@ -40,3 +43,11 @@
   become: yes
   roles:
     - "gluster-client"
+
+# Configure testing vm for softwares
+- hosts: testers
+  vars_files:
+    - vars/default.yml
+  become: yes
+  roles:
+    - tester-base

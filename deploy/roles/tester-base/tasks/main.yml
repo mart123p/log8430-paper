@@ -1,0 +1,29 @@
+---
+- name: Install java & maven
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - default-jdk
+    - maven
+
+- name: Create tools folder
+  file:
+    recurse: yes
+    state: directory
+    path: /opt/{{ item }}/
+  loop:
+    - ycsb
+    - caliper
+  
+- name: Extract ycsb
+  unarchive:
+    src: https://github.com/brianfrankcooper/YCSB/releases/download/0.5.0/ycsb-0.5.0.tar.gz
+    dest: /opt/ycsb/
+    remote_src: yes
+
+- name: Extract caliper
+  unarchive:
+    src: https://github.com/hyperledger/caliper-benchmarks/archive/v0.4.0.tar.gz
+    dest: /opt/caliper/
+    remote_src: yes
