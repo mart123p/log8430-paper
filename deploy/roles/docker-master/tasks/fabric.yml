@@ -1,4 +1,10 @@
 ---
+- name: Setup docker network
+  docker_network:
+    name: 2org1peergoleveldb_solo_raft_default
+    state: present
+    driver: bridge
+
 - name: Setup ordering service
   docker_container:
     auto_remove: no
@@ -28,3 +34,5 @@
       - /mnt/shared/config_solo_raft/:/etc/hyperledger/configtx
       - /mnt/shared/config_solo_raft/crypto-config/ordererOrganizations/example.com/orderers/orderer0.example.com/:/etc/hyperledger/msp/orderer
     volume_driver: local
+    networks:
+      - name: 2org1peergoleveldb_solo_raft_default
