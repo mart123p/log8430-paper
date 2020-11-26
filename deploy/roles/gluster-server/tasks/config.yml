@@ -16,12 +16,20 @@
   gluster.gluster.gluster_peer:
     state: present
     nodes: "{{ cluster_list }}"
+
+- name: Craft command volume create
+  set_fact:
+    gluster_create_command: ""
+
+- name: Craft command volume create loop
+  set_fact:
+    gluster_create_command: "{{ gluster_create_command + item + ':/srv/gluster/brick/shared/ ' }}"
+  loop: "{{ cluster_list }}"
     
-- name: Create a volume gluster
-  gluster.gluster.gluster_volume:
-    state: present
-    name: shared
-    bricks: /srv/gluster/brick/shared/
-    cluster: "{{ cluster_list }}"
-    force: true
+- name: Create a volume gluster with the command because ansible gluster is broken
+  command: gluster volume create shared replica 2 {{ gluster_create_command }} force
+  run_once: true
+
+- name: Start volume
+  command: gluster volume start shared
   run_once: true

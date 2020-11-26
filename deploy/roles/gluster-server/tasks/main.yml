@@ -6,6 +6,6 @@
 
 - name: Create directory for gluster volume data
   file:
-    path: /srv/gluster/brick/shared/
+    path: /srv/gluster/brick/
     recurse: yes
     state: directory

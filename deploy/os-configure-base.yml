@@ -42,6 +42,7 @@
     - vars/default.yml
   become: yes
   roles:
+    - "gluster-base"
     - "gluster-client"
 
 # Configure testing vm for softwares
