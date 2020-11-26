@@ -2,6 +2,8 @@
   username: azureuser
   port_base: 6050
   dnszone: example.com
+
+  fabric_version: "1.4"
   
   # amount_worker + 2 VM will be created if test_vm selected if not amount_worker + 1 
   ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
