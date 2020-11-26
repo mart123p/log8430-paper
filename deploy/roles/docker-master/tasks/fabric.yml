@@ -1,0 +1,30 @@
+---
+- name: Setup ordering service
+  docker_container:
+    auto_remove: no
+    name: orderer0.example.com
+    image: hyperledger/fabric-orderer:{{ fabric_version }}
+    state: started
+    env:
+      ORDERER_GENERAL_LOGLEVEL: WARN
+      FABRIC_LOGGING_SPEC=grpc: WARN:WARN
+      ORDERER_GENERAL_LISTENADDRESS: 0.0.0.0
+      ORDERER_GENERAL_GENESISMETHOD: file
+      ORDERER_GENERAL_GENESISFILE: /etc/hyperledger/configtx/genesis.block
+      ORDERER_GENERAL_LOCALMSPID: OrdererMSP
+      ORDERER_GENERAL_LOCALMSPDIR: /etc/hyperledger/msp/orderer/msp
+      ORDERER_GENERAL_TLS_ENABLED: true
+      ORDERER_GENERAL_TLS_PRIVATEKEY: /etc/hyperledger/msp/orderer/tls/server.key
+      ORDERER_GENERAL_TLS_CERTIFICATE: /etc/hyperledger/msp/orderer/tls/server.crt
+      ORDERER_GENERAL_TLS_ROOTCAS: [/etc/hyperledger/msp/orderer/tls/ca.crt]
+      ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE: /etc/hyperledger/msp/orderer/tls/server.crt
+      ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY: /etc/hyperledger/msp/orderer/tls/server.key
+
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: orderer
+    published_ports:
+      - 7050:7050
+    volumes:
+      - /mnt/shared/config_solo_raft/:/etc/hyperledger/configtx
+      - /mnt/shared/config_solo_raft/crypto-config/ordererOrganizations/example.com/orderers/orderer0.example.com/:/etc/hyperledger/msp/orderer
+    volume_driver: local
