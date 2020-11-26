@@ -8,7 +8,7 @@
   roles: 
     - "host-registration"
 
-- hosts: monitor:workers
+- hosts: master:workers
   vars_files:
     - vars/default.yml
   become: yes
