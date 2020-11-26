@@ -27,7 +27,7 @@
   loop: "{{ cluster_list }}"
     
 - name: Create a volume gluster with the command because ansible gluster is broken
-  command: gluster volume create shared replica 2 {{ gluster_create_command }} force
+  command: gluster volume create shared replica {{ vm_config['worker']['count'] + 1 }} {{ gluster_create_command }} force
   run_once: true
 
 - name: Start volume
