@@ -112,7 +112,7 @@
   command: >
     az network private-dns record-set cname set-record
     --cname "master-1.hosts.{{ dnszone }}"
-    --record-set-name "orderer"
+    --record-set-name "orderer0"
     --zone-name "{{ dnszone }}"
     --resource-group "{{ resource_group }}"
   register: dns_record_cname_master
