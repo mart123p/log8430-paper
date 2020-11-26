@@ -8,6 +8,8 @@
     - maven
     - nodejs
     - npm
+    - build-essential
+    
 
 - name: Create tools folder
   file:
