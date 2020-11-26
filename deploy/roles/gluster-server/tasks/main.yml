@@ -9,3 +9,9 @@
     path: /srv/gluster/brick/
     recurse: yes
     state: directory
+
+- name: Ensure glusterfs is started
+  systemd:
+    name: glusterd
+    enabled: yes
+    state: restarted
