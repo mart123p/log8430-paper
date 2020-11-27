@@ -1,0 +1,13 @@
+---
+- name: Create import the local docker-compose file
+  become_user: azureuser
+  file:
+    state: directory
+    path: /home/azureuser/mongodb-single/
+
+
+- name: Copy mongodb-single
+  become_user: azureuser
+  copy:
+    dest: /home/azureuser/mongodb-single/docker-compose.yml
+    src: roles/docker-master/files/mongodb/docker-compose.yml

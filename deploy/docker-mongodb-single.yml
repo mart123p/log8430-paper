@@ -1,0 +1,18 @@
+---
+# Deploy mongodb cluster on a single vm
+#
+#
+- hosts: localhost
+  gather_facts: False
+  vars_files:
+    - vars/default.yml
+  roles: 
+    - "host-registration"
+
+- hosts: master
+  vars_files:
+    - vars/default.yml
+  become: yes
+  tasks:
+    - name: Configure Master node
+      include: "roles/docker-master/tasks/mongodb-single.yml"
