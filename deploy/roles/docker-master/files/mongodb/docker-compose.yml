@@ -1,6 +1,6 @@
 version: '3'
 services:
-  mongoos:
+  mongos:
     container_name: mongos
     image: bitnami/mongodb-sharded:latest
     restart: always
@@ -44,7 +44,7 @@ services:
       - 27018
     environment:
       - MONGODB_SHARDING_MODE=shardsvr
-      - MONGODB_MONGOS_HOST=mongoos
+      - MONGODB_MONGOS_HOST=mongos
       - MONGODB_ROOT_PASSWORD=password123
       - MONGODB_REPLICA_SET_MODE=primary
       - MONGODB_REPLICA_SET_KEY=replicasetkey123
@@ -64,7 +64,7 @@ services:
       - 27018
     environment:
       - MONGODB_SHARDING_MODE=shardsvr
-      - MONGODB_MONGOS_HOST=mongoos
+      - MONGODB_MONGOS_HOST=mongos
       - MONGODB_ROOT_PASSWORD=password123
       - MONGODB_REPLICA_SET_MODE=primary
       - MONGODB_REPLICA_SET_KEY=replicasetkey123
