@@ -1,7 +1,7 @@
 ---
   username: azureuser
   port_base: 6050
-  
+
   # Params for fabric
   # dnszone: example.com
   # fabric_version: "1.4"
@@ -11,10 +11,10 @@
 
   vm_config:
     worker:
-      count: 2
+      count: 0
       size: Standard_B2s
     test:
-      count: 1 
+      count: 0 
       size: Standard_B2s
     master:
       count: 1 #Value is hard coded to 1 and not read
