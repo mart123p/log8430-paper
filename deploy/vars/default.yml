@@ -14,7 +14,7 @@
       count: 0
       size: Standard_B2s
     test:
-      count: 0 
+      count: 1
       size: Standard_B2s
     master:
       count: 1 #Value is hard coded to 1 and not read
