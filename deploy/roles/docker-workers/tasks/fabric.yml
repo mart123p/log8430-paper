@@ -62,6 +62,7 @@
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     published_ports:
       - 7051:7051
+      - 7052:7052
     volumes:
       - /var/run/:/host/var/run/
       - /mnt/shared/config_solo_raft/crypto-config/peerOrganizations/org{{ inventory_hostname | replace('node-worker-','') }}.example.com/peers/peer0.org{{ inventory_hostname | replace('node-worker-','') }}.example.com/:/etc/hyperledger/msp/peer
