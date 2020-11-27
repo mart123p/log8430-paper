@@ -1,12 +1,13 @@
 version: '3'
 services:
-  mongos:
-    container_name: mongos
+  mongoos:
+    container_name: mongoos
     image: bitnami/mongodb-sharded:latest
     restart: always
     ports:
       - 27017:27017
     environment:
+      - MONGODB_ADVERTISED_HOSTNAME=mongoos
       - MONGODB_SHARDING_MODE=mongos
       - MONGODB_CFG_PRIMARY_HOST=mongodb-cfg
       - MONGODB_CFG_REPLICA_SET_NAME=cfgreplicaset
@@ -24,11 +25,12 @@ services:
     expose:
       - 27019
     environment:
+      - MONGODB_ADVERTISED_HOSTNAME=mongodb-cfg
       - MONGODB_SHARDING_MODE=configsvr
       - MONGODB_ROOT_PASSWORD=password123
       - MONGODB_REPLICA_SET_MODE=primary
       - MONGODB_REPLICA_SET_KEY=replicasetkey123
-      - MONGODB_REPLICA_SET_NAME=config-replicaset
+      - MONGODB_REPLICA_SET_NAME=cfgreplicaset
     logging:
       driver: "json-file"
       options:
@@ -43,8 +45,9 @@ services:
     expose:
       - 27018
     environment:
+      - MONGODB_ADVERTISED_HOSTNAME=mongodb-shard1
       - MONGODB_SHARDING_MODE=shardsvr
-      - MONGODB_MONGOS_HOST=mongos
+      - MONGODB_MONGOS_HOST=mongoos
       - MONGODB_ROOT_PASSWORD=password123
       - MONGODB_REPLICA_SET_MODE=primary
       - MONGODB_REPLICA_SET_KEY=replicasetkey123
@@ -63,8 +66,9 @@ services:
     expose:
       - 27018
     environment:
+      - MONGODB_ADVERTISED_HOSTNAME=mongodb-shard2
       - MONGODB_SHARDING_MODE=shardsvr
-      - MONGODB_MONGOS_HOST=mongos
+      - MONGODB_MONGOS_HOST=mongoos
       - MONGODB_ROOT_PASSWORD=password123
       - MONGODB_REPLICA_SET_MODE=primary
       - MONGODB_REPLICA_SET_KEY=replicasetkey123
