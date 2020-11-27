@@ -1,15 +1,24 @@
 ---
-    - name: Deploy the demo environnement in Azure
-      hosts: localhost
-      connection: local
-      vars_files:
-        - vars/default.yml
-      vars:
-        resource_group: log8430-paper
-        region: canadaeast
-        ssh_key: "{{ lookup('file', 'creds/ssh/id_rsa.pub') }}"
-    
-      roles:
-        - az-network
-        - az-dns
-        - az-vm-linux
+- name: Deploy the demo environnement in Azure
+  hosts: localhost
+  connection: local
+  vars_files:
+    - vars/default.yml
+  vars:
+    resource_group: log8430-paper
+    region: canadaeast
+    ssh_key: "{{ lookup('file', 'creds/ssh/id_rsa.pub') }}"
+
+  tasks:
+    - name: Configure Azure Network
+      include_role:
+        name: az-network
+        
+    - name: Install DNS if requiered
+      include_role:
+        name: az-dns
+      when: dnszone is defined
+
+    - name: Configure VMs
+      include_role:
+        name: az-vm-linux
