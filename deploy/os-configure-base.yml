@@ -24,26 +24,6 @@
   become: yes
   roles:
     - "agent-monitor"
-    - "gluster-base"
-    - "gluster-server"
-
-# Configure cluster volumes
-- hosts: master
-  vars_files:
-    - vars/default.yml
-  become: yes
-  tasks:
-    - name: Configure Gluster volume
-      include: "roles/gluster-server/tasks/config.yml"
-  
-# Configure gluster mount
-- hosts: workers:master:testers
-  vars_files:
-    - vars/default.yml
-  become: yes
-  roles:
-    - "gluster-base"
-    - "gluster-client"
 
 # Configure testing vm for softwares
 - hosts: testers
