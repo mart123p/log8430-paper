@@ -1,4 +1,4 @@
-# Test infrastructre for MongoDb vs Hyperledger Fabric
+# Test infrastructre for MongoDB vs Hyperledger Fabric
 
 ## Infrastructure Deployment
 
